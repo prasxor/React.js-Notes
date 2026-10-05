@@ -4,16 +4,16 @@
 3)Arrow Functions
 4)Ternary Operator (? :)
 5)Logical Operators (&&, ||)
-6)Nullish Coalescing Operator (??)
+6)Nullish Coalescing Operator (??) [pending]
 7)Default Parameters
 8)Array Methods: map, filter, find, forEach
 9)Destructuring
 10)Spread Operator and Rest Parameter
-11)Optional Chaining
+11)Optional Chaining [pending]
 12)Promises
 13)Async/Await
 14)Fetch API
-15)Modules(Import/Export)
+15)Modules(Import/Export) [pending]
 
 //!React Topics
 1. Introduction
