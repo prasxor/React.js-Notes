@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>React Notes</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #f7f8fa;
+        --surface: #ffffff;
+        --sidebar: #fbfcfd;
+        --text: #202733;
+        --muted: #687383;
+        --border: #e5e8ed;
+        --accent: #087e8b;
+        --accent-soft: #e6f4f4;
+        --code: #f2f4f7;
+        --code-text: #263343;
+        --shadow: 0 1px 2px rgb(20 30 45 / 5%);
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --page: #11151b;
+        --surface: #171d25;
+        --sidebar: #141a21;
+        --text: #e3e8ef;
+        --muted: #a0aaba;
+        --border: #2a333f;
+        --accent: #71c9ce;
+        --accent-soft: #20363a;
+        --code: #10161e;
+        --code-text: #dbe4ee;
+        --shadow: 0 1px 2px rgb(0 0 0 / 20%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .topbar {
+        position: sticky;
+        z-index: 2;
+        top: 0;
+        display: flex;
+        min-height: 68px;
+        align-items: center;
+        gap: 28px;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .brand {
+        display: flex;
+        min-width: 214px;
+        align-items: center;
+        gap: 11px;
+        color: var(--text);
+        font-size: 16px;
+        font-weight: 680;
+        letter-spacing: -0.03em;
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 17px;
+        font-weight: 750;
+      }
+
+      .search-wrap {
+        position: relative;
+        width: min(100%, 520px);
+        margin: 0 auto;
+      }
+
+      .search-wrap::before {
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        color: var(--muted);
+        content: "⌕";
+        font-size: 20px;
+        line-height: 1;
+        transform: translateY(-54%);
+      }
+
+      .search {
+        width: 100%;
+        height: 39px;
+        padding: 0 14px 0 39px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+        background: var(--page);
+        color: var(--text);
+      }
+
+      .search:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+      }
+
+      .theme-toggle {
+        display: inline-flex;
+        min-width: 118px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .theme-toggle:hover,
+      .pager button:hover {
+        border-color: var(--accent);
+      }
+
+      .layout {
+        display: grid;
+        min-height: calc(100vh - 68px);
+        grid-template-columns: 272px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 68px;
+        height: calc(100vh - 68px);
+        overflow-y: auto;
+        padding: 25px 15px 30px 20px;
+        border-right: 1px solid var(--border);
+        background: var(--sidebar);
+      }
+
+      .sidebar-heading {
+        margin: 0 10px 12px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .sidebar-heading.section-start {
+        margin-top: 28px;
+      }
+
+      .topic-list {
+        display: grid;
+        gap: 2px;
+      }
+
+      .topic-link {
+        display: block;
+        width: 100%;
+        padding: 7px 10px;
+        overflow: hidden;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 1.45;
+        text-align: left;
+        text-overflow: ellipsis;
+      }
+
+      .topic-link:hover {
+        background: var(--page);
+        color: var(--text);
+      }
+
+      .topic-link[aria-current="page"] {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 650;
+      }
+
+      .topic-link.nested {
+        padding-left: 20px;
+        font-size: 12px;
+      }
+
+      .sidebar-empty {
+        padding: 8px 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .main {
+        min-width: 0;
+        padding: 45px 48px 36px;
+      }
+
+      .document {
+        width: min(100%, 850px);
+        margin: 0 auto;
+      }
+
+      .document-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px 20px;
+        margin-bottom: 26px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .document-path {
+        overflow-wrap: anywhere;
+      }
+
+      .document h1 {
+        margin: 0 0 32px;
+        font-size: clamp(28px, 4vw, 37px);
+        font-weight: 710;
+        letter-spacing: -0.045em;
+        line-height: 1.18;
+      }
+
+      .note-content {
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .note-content h2 {
+        margin: 34px 0 11px;
+        font-size: 21px;
+        font-weight: 680;
+        letter-spacing: -0.025em;
+        line-height: 1.4;
+      }
+
+      .note-content h2:first-child {
+        margin-top: 0;
+      }
+
+      .note-content p {
+        margin: 8px 0;
+      }
+
+      .note-content .bullet {
+        position: relative;
+        padding-left: 22px;
+      }
+
+      .note-content .bullet::before {
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+        content: "•";
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      .note-label {
+        margin: 17px 0 6px !important;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+      }
+
+      .code-block {
+        position: relative;
+        margin: 13px 0 21px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--code);
+        box-shadow: var(--shadow);
+      }
+
+      .code-block pre {
+        margin: 0;
+        padding: 19px 18px;
+        overflow-x: auto;
+        color: var(--code-text);
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.65;
+        tab-size: 2;
+      }
+
+      .copy-code {
+        position: absolute;
+        z-index: 1;
+        top: 8px;
+        right: 8px;
+        padding: 4px 9px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 11px;
+      }
+
+      .copy-code:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .token-keyword {
+        color: #a24cbd;
+      }
+
+      .token-string {
+        color: #26825a;
+      }
+
+      .token-comment {
+        color: #84909e;
+        font-style: italic;
+      }
+
+      .token-number {
+        color: #c46b28;
+      }
+
+      .token-tag {
+        color: #16809a;
+      }
+
+      [data-theme="dark"] .token-keyword {
+        color: #d19be3;
+      }
+
+      [data-theme="dark"] .token-string {
+        color: #91d6ad;
+      }
+
+      [data-theme="dark"] .token-number {
+        color: #f0ac71;
+      }
+
+      [data-theme="dark"] .token-tag {
+        color: #80d0dd;
+      }
+
+      .pager {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 48px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      .pager button {
+        max-width: 48%;
+        padding: 10px 13px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        cursor: pointer;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pager button:disabled {
+        visibility: hidden;
+      }
+
+      .pager .next {
+        margin-left: auto;
+      }
+
+      .message {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface);
+        color: var(--muted);
+      }
+
+      .message.error {
+        border-color: #d88787;
+        color: #ad3434;
+      }
+
+      .loading {
+        color: var(--muted);
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          gap: 12px;
+          padding: 10px 14px;
+        }
+
+        .brand {
+          min-width: 0;
+          font-size: 0;
+        }
+
+        .brand-mark {
+          flex: 0 0 auto;
+        }
+
+        .search-wrap {
+          min-width: 0;
+        }
+
+        .theme-toggle {
+          min-width: 42px;
+          padding: 8px;
+          font-size: 0;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+          height: auto;
+          max-height: 34vh;
+          padding: 17px 14px;
+          border-right: 0;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .topic-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .main {
+          padding: 29px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="React Notes home">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        React Notes
+      </a>
+      <div class="search-wrap">
+        <input
+          id="search"
+          class="search"
+          type="search"
+          placeholder="Search notes..."
+          aria-label="Search notes"
+          autocomplete="off"
+        />
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button">
+        <span id="theme-icon" aria-hidden="true">☾</span>
+        <span id="theme-label">Dark mode</span>
+      </button>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="Topics">
+        <h2 class="sidebar-heading">React</h2>
+        <nav id="react-topics" class="topic-list" aria-label="React topics"></nav>
+        <h2 class="sidebar-heading section-start">JS FOR REACT</h2>
+        <nav id="js-topics" class="topic-list" aria-label="JavaScript topics"></nav>
+      </aside>
+
+      <main class="main">
+        <article id="document" class="document" aria-live="polite">
+          <p class="loading">Loading notes...</p>
+        </article>
+      </main>
+    </div>
+
+    <script>
+      const reactFiles = [
+        "00-Syllabus.txt",
+        "01-Introduction.txt",
+        "02-History.txt",
+        "03-Keyfeatures.txt",
+        "04-VirtualDOM and Reconciliation.txt",
+        "05-Project Structure.txt",
+        "06-React vs ReactDOM.txt",
+        "07-Components.txt",
+        "08-JSX,Fragments,Expressions.txt",
+        "09-Props.txt",
+        "10-Rendering Lists and Keys.txt",
+        "11-ConditionalRendering.txt",
+        "12-Events.txt",
+        "13-State.txt",
+        "14-Lifecyle methods.txt",
+        "15-Hooks.txt",
+        "15.1-useState.txt",
+        "15.2-useEffect.txt",
+        "15.3-useContext.txt",
+        "15.4-useRef.txt",
+        "15.5-useMemo.txt",
+        "15.6-useCallback.txt",
+        "16-AddingStyles.txt",
+        "17-Form Handling.txt",
+        "17.1-ReactHookForm.txt",
+        "18-Axios.txt",
+        "19-Router.txt",
+        "20-Memo.txt",
+        "21-PureComponents.txt",
+        "22-LazyLoading and Code Splitting.txt",
+        "23-Portals.txt",
+        "24-Custom Hooks.txt",
+      ];
+
+      const javascriptFiles = [
+        "01_varLetConst.js",
+        "02_TemplateLiterals.js",
+        "03_ArrowFunctions.js",
+        "04_TernararyOperator.js",
+        "05_LogicalOperators.js",
+        "06_NullishCoalescing.js",
+        "07_DefaultParameters.js",
+        "08_ArrayMethods.js",
+        "09_Destructuring.js",
+        "10_SpreadOperatorRestParameter.js",
+        "11_OptionalChaining.js",
+        "12_Promise.js",
+        "13_AsyncAwait.js",
+        "14_FetchMethod.js",
+        "15_Modules.js",
+      ];
+
+      const entries = [
+        ...reactFiles.map((path) => ({
+          id: path,
+          path,
+          title: topicTitle(path),
+          section: "react",
+        })),
+        ...javascriptFiles.map((name) => {
+          const path = `JS FOR REACT/${name}`;
+          return {
+            id: path,
+            path,
+            title: topicTitle(name),
+            section: "javascript",
+          };
+        }),
+      ];
+
+      const documentElement = document.querySelector("#document");
+      const searchInput = document.querySelector("#search");
+      const reactTopics = document.querySelector("#react-topics");
+      const jsTopics = document.querySelector("#js-topics");
+      let selectedId = reactFiles[0];
+      let searchTerm = "";
+
+      function topicTitle(path) {
+        return path
+          .replace(/\.[^.]+$/, "")
+          .replace(/^\d+(?:\.\d+)?[-_]/, "")
+          .replace(/_/g, " ")
+          .replace(/,\s*/g, ", ");
+      }
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>"']/g, (character) => {
+          const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          };
+          return entities[character];
+        });
+      }
+
+      function encodePath(path) {
+        return path.split("/").map(encodeURIComponent).join("/");
+      }
+
+      function isCodeLine(line) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("//!") || trimmed.startsWith("//*")) {
+          return false;
+        }
+
+        return /^(?:import\b|export\b|const\b|let\b|var\b|function\b|class\b|return\b|if\b|else\b|for\b|while\b|try\b|catch\b|throw\b|async\b|await\b|<\/?[A-Za-z][\w.-]*(?:\s|\/?>)|[{}\[\]]\s*$|[}\])]+[;,]?$)/.test(
+          trimmed,
+        ) || /^(?:[A-Za-z_$][\w$.]*\s*\(.*(?:\)|=>\s*\()\s*[;{]?|[A-Za-z_$][\w$]*\s*=\s*.*;)$/.test(
+          trimmed,
+        );
+      }
+
+      function isCodeContinuation(line) {
+        const trimmed = line.trim();
+        return (
+          isCodeLine(line) ||
+          /^[}\])]/.test(trimmed) ||
+          (/^\s{2,}/.test(line) && /[{}()[\];=<>]/.test(trimmed)) ||
+          (/^(?:\/\/(?![!*])|\/\*|\*\/)/.test(trimmed))
+        );
+      }
+
+      function highlightCode(source) {
+        const tokens =
+          /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|<\/?[A-Za-z][\w.-]*|\/?>|\b(?:const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|throw|new|this|class|extends|import|from|export|default|async|await|true|false|null|undefined|void|typeof|instanceof|in|of)\b|\b\d+(?:\.\d+)?\b)/g;
+        let output = "";
+        let cursor = 0;
+        let match;
+
+        while ((match = tokens.exec(source)) !== null) {
+          output += escapeHtml(source.slice(cursor, match.index));
+          const token = match[0];
+          let kind = "keyword";
+          if (token.startsWith("//") || token.startsWith("/*")) {
+            kind = "comment";
+          } else if (/^["'`]/.test(token)) {
+            kind = "string";
+          } else if (/^<\/?[A-Za-z]|^\/?>$/.test(token)) {
+            kind = "tag";
+          } else if (/^\d/.test(token)) {
+            kind = "number";
+          }
+          output += `<span class="token-${kind}">${escapeHtml(token)}</span>`;
+          cursor = match.index + token.length;
+        }
+
+        return output + escapeHtml(source.slice(cursor));
+      }
+
+      function renderCode(source) {
+        const escapedSource = escapeHtml(source);
+        return `<div class="code-block"><button class="copy-code" type="button" aria-label="Copy code">Copy</button><pre><code>${highlightCode(source)}</code></pre><textarea class="code-source" hidden aria-hidden="true">${escapedSource}</textarea></div>`;
+      }
+
+      function renderNote(source, title) {
+        const lines = source.split("\n");
+        const blocks = [];
+        let paragraph = [];
+        let index = 0;
+        let firstHeading = true;
+        const normalizedTitle = title.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+
+        function flushParagraph() {
+          if (paragraph.length) {
+            blocks.push(`<p>${paragraph.map(escapeHtml).join("<br>")}</p>`);
+            paragraph = [];
+          }
+        }
+
+        while (index < lines.length) {
+          const line = lines[index];
+          const trimmed = line.trim();
+
+          if (!trimmed) {
+            flushParagraph();
+            index += 1;
+            continue;
+          }
+
+          const heading = line.match(/^\/\/!\s?(.*)$/);
+          if (heading) {
+            flushParagraph();
+            const headingTitle = heading[1]
+              .toLocaleLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+            if (!(firstHeading && headingTitle === normalizedTitle)) {
+              blocks.push(`<h2>${escapeHtml(heading[1])}</h2>`);
+            }
+            firstHeading = false;
+            index += 1;
+            continue;
+          }
+
+          const label = line.match(/^\s*\/\/\*\s?(.*)$/);
+          if (label) {
+            flushParagraph();
+            blocks.push(`<p class="note-label">${escapeHtml(label[1])}</p>`);
+            index += 1;
+            continue;
+          }
+
+          const bullet = line.match(/^(\s*)-->\s?(.*)$/);
+          if (bullet) {
+            flushParagraph();
+            blocks.push(`<p class="bullet">${escapeHtml(bullet[2])}</p>`);
+            index += 1;
+            continue;
+          }
+
+          if (isCodeLine(line)) {
+            flushParagraph();
+            const start = index;
+            index += 1;
+
+            while (index < lines.length) {
+              if (lines[index].trim()) {
+                if (!isCodeContinuation(lines[index])) break;
+                index += 1;
+                continue;
+              }
+
+              let nextCodeLine = index + 1;
+              while (nextCodeLine < lines.length && !lines[nextCodeLine].trim()) {
+                nextCodeLine += 1;
+              }
+              if (
+                nextCodeLine >= lines.length ||
+                !isCodeContinuation(lines[nextCodeLine])
+              ) {
+                break;
+              }
+              index = nextCodeLine;
+            }
+
+            blocks.push(renderCode(lines.slice(start, index).join("\n")));
+            continue;
+          }
+
+          paragraph.push(line);
+          index += 1;
+        }
+
+        flushParagraph();
+        return blocks.join("");
+      }
+
+      function matchingEntries() {
+        if (!searchTerm) return entries;
+        const query = searchTerm.toLocaleLowerCase();
+        return entries.filter((entry) => {
+          return (
+            entry.title.toLocaleLowerCase().includes(query) ||
+            entry.path.toLocaleLowerCase().includes(query) ||
+            (entry.content || "").toLocaleLowerCase().includes(query)
+          );
+        });
+      }
+
+      function renderSidebar() {
+        const matches = matchingEntries();
+        for (const [section, target] of [
+          ["react", reactTopics],
+          ["javascript", jsTopics],
+        ]) {
+          const sectionEntries = matches.filter((entry) => entry.section === section);
+          target.innerHTML = sectionEntries.length
+            ? sectionEntries
+                .map(
+                  (entry) =>
+                    `<button class="topic-link${section === "javascript" ? " nested" : ""}" type="button" data-topic="${escapeHtml(entry.id)}" aria-current="${entry.id === selectedId ? "page" : "false"}">${escapeHtml(entry.title)}</button>`,
+                )
+                .join("")
+            : '<span class="sidebar-empty">No matching topics</span>';
+        }
+      }
+
+      function renderDocument() {
+        const matches = matchingEntries();
+        if (searchTerm && matches.length === 0) {
+          documentElement.innerHTML =
+            '<p class="message">No notes match your search.</p>';
+          return;
+        }
+
+        const selected = entries.find((entry) => entry.id === selectedId);
+        if (!selected) return;
+
+        if (selected.error) {
+          documentElement.innerHTML = `<p class="message error">Could not load <strong>${escapeHtml(selected.path)}</strong>: ${escapeHtml(selected.error)}. Serve this folder over HTTP and refresh the page.</p>`;
+          return;
+        }
+
+        if (selected.content === undefined) {
+          documentElement.innerHTML = '<p class="loading">Loading notes...</p>';
+          return;
+        }
+
+        const position = entries.indexOf(selected);
+        const previous = entries[position - 1];
+        const next = entries[position + 1];
+        documentElement.innerHTML = `
+          <div class="document-meta">
+            <span>${selected.section === "react" ? "React" : "JavaScript for React"}</span>
+            <span class="document-path">${escapeHtml(selected.path)}</span>
+          </div>
+          <h1>${escapeHtml(selected.title)}</h1>
+          <div class="note-content">${selected.section === "javascript" ? renderCode(selected.content) : renderNote(selected.content, selected.title)}</div>
+          <nav class="pager" aria-label="Previous and next topics">
+            <button type="button" data-topic="${previous ? escapeHtml(previous.id) : ""}" ${previous ? "" : "disabled"}>← ${previous ? escapeHtml(previous.title) : "Previous"}</button>
+            <button class="next" type="button" data-topic="${next ? escapeHtml(next.id) : ""}" ${next ? "" : "disabled"}>${next ? escapeHtml(next.title) : "Next"} →</button>
+          </nav>`;
+      }
+
+      function selectTopic(id) {
+        if (!entries.some((entry) => entry.id === id)) return;
+        selectedId = id;
+        renderSidebar();
+        renderDocument();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      document.addEventListener("click", async (event) => {
+        const topicButton = event.target.closest("[data-topic]");
+        if (topicButton && topicButton.dataset.topic) {
+          selectTopic(topicButton.dataset.topic);
+          return;
+        }
+
+        const copyButton = event.target.closest(".copy-code");
+        if (!copyButton) return;
+
+        const source = copyButton.parentElement.querySelector(".code-source").value;
+        try {
+          await navigator.clipboard.writeText(source);
+          copyButton.textContent = "Copied";
+          window.setTimeout(() => {
+            copyButton.textContent = "Copy";
+          }, 1200);
+        } catch (error) {
+          console.error("Could not copy code to the clipboard.", error);
+          copyButton.textContent = "Copy failed";
+          window.setTimeout(() => {
+            copyButton.textContent = "Copy";
+          }, 1800);
+        }
+      });
+
+      searchInput.addEventListener("input", () => {
+        searchTerm = searchInput.value.trim();
+        const matches = matchingEntries();
+        if (matches.length && !matches.some((entry) => entry.id === selectedId)) {
+          selectedId = matches[0].id;
+        }
+        renderSidebar();
+        renderDocument();
+      });
+
+      document.querySelector("#theme-toggle").addEventListener("click", () => {
+        const root = document.documentElement;
+        const isDark = root.dataset.theme !== "dark";
+        root.dataset.theme = isDark ? "dark" : "light";
+        document.querySelector("#theme-icon").textContent = isDark ? "☀" : "☾";
+        document.querySelector("#theme-label").textContent = isDark
+          ? "Light mode"
+          : "Dark mode";
+        document.querySelector('meta[name="theme-color"]').content = isDark
+          ? "#11151b"
+          : "#f7f8fa";
+      });
+
+      async function loadNotes() {
+        for (const [index, entry] of entries.entries()) {
+          try {
+            const response = await fetch(encodePath(entry.path));
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            entry.content = await response.text();
+          } catch (error) {
+            entry.error = error instanceof Error ? error.message : String(error);
+            console.error(`Could not load ${entry.path}.`, error);
+          }
+          renderSidebar();
+          if (entry.id === selectedId || index === entries.length - 1) {
+            renderDocument();
+          }
+        }
+
+        const matches = matchingEntries();
+        if (searchTerm && matches.length && !matches.some((entry) => entry.id === selectedId)) {
+          selectedId = matches[0].id;
+        }
+        renderSidebar();
+        renderDocument();
+      }
+
+      renderSidebar();
+      loadNotes();
+    </script>
+  </body>
+</html>
