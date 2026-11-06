@@ -168,9 +168,9 @@ Component Re-rendered
 --> State is used to manage data within a Component.
 
 //! Difference Between State and Props
-| State | Props |
-|--------|-------|
-| Stores Component Data | Receives Data from Parent |
-| Mutable (Can Change) | Immutable (Read-Only) |
-| Triggers Re-render on Update | Re-renders when Parent passes new Props |
-| Used for Dynamic Data | Used for Passing Data |
+|              State            |               Props                     |
+|-------------------------------|-----------------------------------------|
+| Stores Component Data         | Receives Data from Parent               |
+| Mutable (Can Change)          | Immutable (Read-Only)                   |
+| Triggers Re-render on Update  | Re-renders when Parent passes new Props |
+| Used for Dynamic Data         | Used for Passing Data                   |
