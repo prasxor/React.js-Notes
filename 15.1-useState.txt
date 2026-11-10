@@ -191,10 +191,10 @@ function Counter() {
 
 //! useState() vs State in Class Components
 
-| useState() | Class Component State |
-|-------------|-----------------------|
-| Functional Components | Class Components |
-| useState() Hook | this.state |
-| setState Function | this.setState() |
-| No this Keyword | Uses this Keyword |
-| Simpler Syntax | More Boilerplate |
+| useState()              | Class Component State |
+|-------------------------|-----------------------|
+| Functional Components   | Class Components      |
+| useState() Hook         | this.state            |
+| setState Function       | this.setState()       |
+| No this Keyword         | Uses this Keyword     |
+| Simpler Syntax          | More Boilerplate      |
