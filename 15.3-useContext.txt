@@ -192,10 +192,10 @@ Child Components
 useContext()
 
 //! useContext() vs Props
-| Props | useContext() |
-|---------|--------------|
-| Parent → Child | Shared Across Components |
-| Prop Drilling Possible | No Prop Drilling |
-| Passed Manually | Accessed Directly |
-| Best for Component-Specific Data | Best for Global Data |
-| Suitable for Small Hierarchies | Suitable for Deep Component Trees |
+|               Props                |              useContext()         |
+|------------------------------------|-----------------------------------|
+| Parent → Child                     | Shared Across Components          |
+| Prop Drilling Possible             | No Prop Drilling                  |
+| Passed Manually                    | Accessed Directly                 |
+| Best for Component-Specific Data   | Best for Global Data              |
+| Suitable for Small Hierarchies     | Suitable for Deep Component Trees |

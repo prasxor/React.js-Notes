@@ -149,8 +149,8 @@ Reason:
 --> Prevents Memory Leaks.
 
 //! useEffect() vs Lifecycle Methods
-| useEffect() | Class Lifecycle |
-|--------------|----------------|
-| useEffect(() => {}, []) | componentDidMount() |
-| useEffect(() => {}) | componentDidUpdate() |
-| return () => {} | componentWillUnmount() |
+| useEffect()               | Class Lifecycle        |
+|---------------------------|------------------------|
+| useEffect(() => {}, [])   | componentDidMount()    |
+| useEffect(() => {})       | componentDidUpdate()   |
+| return () => {}           | componentWillUnmount() |
