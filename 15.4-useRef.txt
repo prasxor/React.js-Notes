@@ -120,9 +120,9 @@ Value Updates
 No Re-render
 
 //! useRef() vs useState()
-| useRef() | useState() |
-|-----------|------------|
-| Stores Mutable Values | Stores State |
-| Does NOT Trigger Re-render | Triggers Re-render |
-| Accessed using .current | Accessed directly |
-| Used for DOM Access | Used for UI Updates |
+| useRef()                      | useState()            |
+|-------------------------------|-----------------------|
+| Stores Mutable Values         | Stores State          |
+| Does NOT Trigger Re-render    | Triggers Re-render    |
+| Accessed using .current       | Accessed directly     |
+| Used for DOM Access           | Used for UI Updates   |
