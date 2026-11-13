@@ -195,9 +195,9 @@ Hello
 </div>
 
 //! Comparison
-| Styling Method | Scope | Best Use |
-|----------------|-------|----------|
-| Inline CSS | Single Element | Dynamic Styles |
-| Global CSS | Entire Application | Common Styles |
-| CSS Modules | Component Level | Large Applications |
-| Tailwind CSS | Utility Classes | Modern UI Development |
+| Styling Method    | Scope                 | Best Use              |
+|-------------------|-----------------------|-----------------------|
+| Inline CSS        | Single Element        | Dynamic Styles        |
+| Global CSS        | Entire Application    | Common Styles         |
+| CSS Modules       | Component Level       | Large Applications    |
+| Tailwind CSS      | Utility Classes       | Modern UI Development |
